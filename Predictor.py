@@ -10,7 +10,7 @@ import pickle
 import tensorflow as tf
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 
-stringToPredict = "Couldn’t hit shit this game rip"
+stringToPredict = "Had a rough day to start but was able to team up with"
 
 # Preprocessing
 tokenizer = None
