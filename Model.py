@@ -5,16 +5,13 @@ Created on Tue Mar  8 11:58:37 2022
 @author: patse
 """
 
-import os
-import re
 import csv
 import time
 import random
-import string
 import numpy as np
 import tensorflow as tf
 from tensorflow import keras
-from tensorflow.keras import layers
+import matplotlib.pyplot as plt
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 
@@ -123,55 +120,17 @@ model = tf.keras.Sequential([
     tf.keras.layers.Dense(3, activation='sigmoid')
 ])
 
-model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-print(model.summary())
-
-history = model.fit(train_padded, train_labels, epochs=30,
-                    validation_data=(test_padded, test_labels), verbose=1)
-
-"""
-# tf.debugging.set_log_device_placement(True)
-print("\n", tf.config.list_physical_devices(), "\n", tf.config.list_logical_devices(), "\n")
-
 with tf.device('/device:CPU:0'):
     start = time.time()
     
+    model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+    
+    history = model.fit(train_padded, train_labels, epochs=10,
+                        validation_data=(test_padded, test_labels), verbose=1)
+
     end = time.time()
-    print("Time elapsed for CPU", end - start, "\n")
-    
-with tf.device('/device:GPU:0'):
-    start = time.time()
-    
-    print(train_data.shape, train_labels.shape, test_data.shape, test_labels.shape)
-    
-    tokenizer = Tokenizer(num_words=20000)
-    tokenizer.fit_on_texts(train_data[0])
-    
-    # use tf-idf labels later
-    
-    # The model
-    # model = keras.Sequential()    
-    # # model.add(keras.Input(shape=(1,)))
-    # model.add(layers.Embedding(1000, 64))
-    # model.add(layers.Dense(3))
-    
-    # print(model.summary())
-    
-    
-    
-    # model = keras.Sequential()
-    # model.add()
-    # model.add(layers.Embedding(input_dim=1000, output_dim=64))
-    # model.add(layers.LSTM(128))
-    # model.add(layers.Dense(4))
+    print("Time elapsed for CPU", end-start)
 
-    # print(model.summary())
 
-    # model.compile('rmsprop', 'mse')
 
-    # input_array = train_data[0]
-    # output_array = model.predict(input_array)
-    # print(output_array)
-    
-    # end = time.time()
-    # print("Time elapsed for GPU", end - start)"""
+model.save('Twitter-Sentiment-Model')
