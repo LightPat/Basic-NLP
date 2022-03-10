@@ -15,22 +15,6 @@ import matplotlib.pyplot as plt
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 
-# def custom_standardization(input_data):
-#   lowercase = tf.strings.lower(input_data)
-#   stripped_html = tf.strings.regex_replace(lowercase, '<br />', ' ')
-#   return tf.strings.regex_replace(stripped_html,
-#                                   '[%s]' % re.escape(string.punctuation),
-#                                   '')
-
-max_features = 10000
-sequence_length = 250
-
-# vectorize_layer = layers.TextVectorization(standardize=custom_standardization,
-#     max_tokens=max_features,
-#     output_mode='int',
-#     output_sequence_length=sequence_length)
-
-
 train_list = []
 test_list = []
 with open('Train_Set.csv', encoding="utf8") as csv_file:
@@ -104,18 +88,9 @@ train_padded = pad_sequences(train_sequences, padding=padding_type, truncating=t
 test_sequences = tokenizer.texts_to_sequences(test_data)
 test_padded = pad_sequences(test_sequences, padding=padding_type, truncating=truncating_type, maxlen=max_length)
 
-# # Label generation
-# label_tokenizer = Tokenizer()
-# label_tokenizer.fit_on_texts(train_labels)
-
-# train_label_seq = np.array(label_tokenizer.texts_to_sequences(train_labels))
-# test_label_seq = np.array(label_tokenizer.texts_to_sequences(test_labels))
-
-# with tf.device('/device:GPU:0'):
 model = tf.keras.Sequential([
     tf.keras.layers.Embedding(vocab_size, embedding_dim, input_length=max_length),
     tf.keras.layers.Flatten(),
-    # tf.keras.layers.GlobalAveragePooling1D(),
     tf.keras.layers.Dense(6, activation='relu'),
     tf.keras.layers.Dense(3, activation='sigmoid')
 ])
