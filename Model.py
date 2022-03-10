@@ -8,6 +8,7 @@ Created on Tue Mar  8 11:58:37 2022
 import csv
 import time
 import random
+import pickle
 import numpy as np
 import tensorflow as tf
 from tensorflow import keras
@@ -44,7 +45,6 @@ for row in test_list:
         continue
     test_data.append(row[3])
     test_labels.append(row[2])
-    
     
 train_data = np.array(train_data)
 test_data = np.array(test_data)
@@ -88,11 +88,14 @@ train_padded = pad_sequences(train_sequences, padding=padding_type, truncating=t
 test_sequences = tokenizer.texts_to_sequences(test_data)
 test_padded = pad_sequences(test_sequences, padding=padding_type, truncating=truncating_type, maxlen=max_length)
 
+with open('tokenizer', 'wb') as f:
+    pickle.dump(tokenizer, f, protocol=pickle.HIGHEST_PROTOCOL)
+
 model = tf.keras.Sequential([
     tf.keras.layers.Embedding(vocab_size, embedding_dim, input_length=max_length),
     tf.keras.layers.Flatten(),
     tf.keras.layers.Dense(6, activation='relu'),
-    tf.keras.layers.Dense(3, activation='sigmoid')
+    tf.keras.layers.Dense(3, activation='softmax')
 ])
 
 with tf.device('/device:CPU:0'):
