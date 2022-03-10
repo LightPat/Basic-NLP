@@ -65,26 +65,26 @@ for row in test_list:
     test_labels.append(row[2])
     
     
-# train_data = np.array(train_data)
-# test_data = np.array(test_data)
+train_data = np.array(train_data)
+test_data = np.array(test_data)
 
-# # One hot encode the labels
-# outputCategories = ["Positive", "Neutral", "Negative"]
+# One hot encode the labels
+outputCategories = ["Positive", "Neutral", "Negative"]
 
-# train_indexes = []
-# for label in train_labels:
-#     train_indexes.append(outputCategories.index(label))
+train_indexes = []
+for label in train_labels:
+    train_indexes.append(outputCategories.index(label))
 
-# train_labels = np.array(train_indexes)
-# train_labels = keras.utils.to_categorical(train_labels, len(outputCategories))
+train_labels = np.array(train_indexes)
+train_labels = keras.utils.to_categorical(train_labels, len(outputCategories))
 
 
-# test_indexes = []
-# for label in test_labels:
-#     test_indexes.append(outputCategories.index(label))
+test_indexes = []
+for label in test_labels:
+    test_indexes.append(outputCategories.index(label))
 
-# test_labels = np.array(test_indexes)
-# test_labels = keras.utils.to_categorical(test_labels, len(outputCategories))
+test_labels = np.array(test_indexes)
+test_labels = keras.utils.to_categorical(test_labels, len(outputCategories))
 
 
 # Hyperparameteres
@@ -107,14 +107,12 @@ train_padded = pad_sequences(train_sequences, padding=padding_type, truncating=t
 test_sequences = tokenizer.texts_to_sequences(test_data)
 test_padded = pad_sequences(test_sequences, padding=padding_type, truncating=truncating_type, maxlen=max_length)
 
-# Label generation
-label_tokenizer = Tokenizer()
-label_tokenizer.fit_on_texts(train_labels)
+# # Label generation
+# label_tokenizer = Tokenizer()
+# label_tokenizer.fit_on_texts(train_labels)
 
-train_label_seq = np.array(label_tokenizer.texts_to_sequences(train_labels))
-test_label_seq = np.array(label_tokenizer.texts_to_sequences(test_labels))
-
-print(train_label_seq[0])
+# train_label_seq = np.array(label_tokenizer.texts_to_sequences(train_labels))
+# test_label_seq = np.array(label_tokenizer.texts_to_sequences(test_labels))
 
 # with tf.device('/device:GPU:0'):
 model = tf.keras.Sequential([
@@ -125,15 +123,11 @@ model = tf.keras.Sequential([
     tf.keras.layers.Dense(3, activation='sigmoid')
 ])
 
-model.compile(loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 print(model.summary())
 
-history = model.fit(train_padded, train_label_seq, epochs=30,
-                    validation_data=(test_padded, test_label_seq), verbose=1)
-
-
-# test_seq = tokenizer.texts_to_sequences(test_data[0:2])
-# padded = pad_sequences(test_seq, padding="post", truncating="post")
+history = model.fit(train_padded, train_labels, epochs=30,
+                    validation_data=(test_padded, test_labels), verbose=1)
 
 """
 # tf.debugging.set_log_device_placement(True)
