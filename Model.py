@@ -100,12 +100,27 @@ with tf.device('/device:CPU:0'):
     
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
     
-    history = model.fit(train_padded, train_labels, epochs=10,
-                        validation_data=(test_padded, test_labels), verbose=1)
+    history = model.fit(train_padded, train_labels, epochs=5,
+                        validation_split=0.1, verbose=1)
 
     end = time.time()
     print("Time elapsed for CPU", end-start)
 
-
-
 model.save('Twitter-Sentiment-Model')
+
+# Plot accuracy and loss metrics
+metricStrings = ['accuracy', 'loss']
+plt.rcParams['font.size'] = '20'
+for key in metricStrings:
+    plt.figure(figsize=(1920/96, 1080/96), dpi=96)
+    plt.title(key, fontsize=30)
+    plt.plot(history.history[key])
+    plt.plot(history.history['val_'+key], linestyle='dotted')
+    plt.xlabel("Epochs")
+    plt.ylabel(key)
+    plt.legend([key, 'val_'+key], fontsize=25)
+    plt.savefig(key)
+    plt.show()
+    
+test_metrics = model.evaluate(test_padded, test_labels, batch_size=1)
+print("Test accuracy", test_metrics[1], "\nTest loss",  test_metrics[0])
